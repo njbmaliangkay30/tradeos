@@ -108,7 +108,7 @@ export default function Calculator() {
             <ResultRow label="Unit bisa dibeli" value={units > 0 ? units.toFixed(5) : '—'} color="var(--accent)" />
           </ResultBox>
 
-          <SectionLabel>Probabilitas & EV</SectionLabel>
+          <SectionLabel>Probabilitas &amp; EV</SectionLabel>
           <ResultBox>
             <ResultRow label="Breakeven win rate" value={(breakeven * 100).toFixed(1) + '%'} />
             <ResultRow
@@ -140,7 +140,7 @@ export default function Calculator() {
             <ResultRow label="Projected wins" value={String(wins100)} color="var(--green)" />
             <ResultRow label="Projected losses" value={String(100 - wins100)} color="var(--red)" />
             <ResultRow
-              label="Net P&L proj."
+              label="Net P&amp;L proj."
               value={(net100 >= 0 ? '+' : '') + '$' + net100.toFixed(0)}
               color={net100 >= 0 ? 'var(--green)' : 'var(--red)'}
             />

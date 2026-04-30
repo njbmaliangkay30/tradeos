@@ -28,16 +28,39 @@ CREATE TABLE IF NOT EXISTS watchlist (
   threshold   INTEGER DEFAULT 200
 );
 
--- Row Level Security (RLS) — personal use, no auth needed
--- Jika kamu ingin tambah auth nanti, aktifkan RLS dan tambah policy per user.
--- Untuk sekarang, pastikan anon key memiliki akses INSERT/SELECT/DELETE.
+-- ============================================================
+-- Row Level Security
+-- Diaktifkan agar Supabase tidak report warning.
+-- Policy: izinkan anon key penuh (personal use, single user).
+-- Jika nanti multi-user, ganti policy dengan auth.uid() check.
+-- ============================================================
 
--- Indexes untuk performa
+ALTER TABLE trades  ENABLE ROW LEVEL SECURITY;
+ALTER TABLE watchlist ENABLE ROW LEVEL SECURITY;
+
+-- Policy untuk trades: anon bisa SELECT, INSERT, DELETE, UPDATE
+CREATE POLICY "anon_all_trades" ON trades
+  FOR ALL
+  TO anon
+  USING (true)
+  WITH CHECK (true);
+
+-- Policy untuk watchlist: anon bisa SELECT, INSERT, DELETE, UPDATE
+CREATE POLICY "anon_all_watchlist" ON watchlist
+  FOR ALL
+  TO anon
+  USING (true)
+  WITH CHECK (true);
+
+-- ============================================================
+-- Indexes
+-- Hanya buat index yang benar-benar dipakai oleh query app.
+-- trades_created_at_idx: dipakai pada ORDER BY created_at DESC
+-- coin_id sudah ter-index otomatis oleh UNIQUE constraint — tidak perlu index manual.
+-- trades_pair_idx dihapus: filtering pair dilakukan di client, bukan DB query.
+-- ============================================================
+
 CREATE INDEX IF NOT EXISTS trades_created_at_idx ON trades(created_at DESC);
-CREATE INDEX IF NOT EXISTS trades_pair_idx ON trades(pair);
-CREATE INDEX IF NOT EXISTS watchlist_coin_id_idx ON watchlist(coin_id);
 
--- Grant akses untuk anon key (Supabase default)
-GRANT ALL ON trades TO anon;
-GRANT ALL ON watchlist TO anon;
+-- Grant sequence access
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO anon;

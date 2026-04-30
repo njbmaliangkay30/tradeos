@@ -180,7 +180,7 @@ export default function Journal({ trades, onAdd, onDelete }: Props) {
                 color="var(--accent)"
               />
               <MetricCard
-                label="Total P&L"
+                label="Total P&amp;L"
                 value={stats ? fmtUSD(stats.totalPnl) : '$0.00'}
                 color={!stats || stats.totalPnl >= 0 ? 'var(--green)' : 'var(--red)'}
               />
@@ -239,7 +239,7 @@ export default function Journal({ trades, onAdd, onDelete }: Props) {
                 <tr>
                   <th>Tanggal</th><th>Pair</th><th>Dir</th><th>Setup</th>
                   <th>Entry</th><th>Exit</th><th>Size</th>
-                  <th>P&L ($)</th><th>P&L (%)</th><th>Emosi</th><th></th>
+                  <th>P&amp;L ($)</th><th>P&amp;L (%)</th><th>Emosi</th><th></th>
                 </tr>
               </thead>
               <tbody>

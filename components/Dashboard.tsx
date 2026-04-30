@@ -91,7 +91,7 @@ export default function Dashboard({ trades }: { trades: Trade[] }) {
       {/* Metric row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '0.75rem', marginBottom: '1rem' }}>
         <MetricCard
-          label="Total P&L"
+          label="Total P&amp;L"
           value={stats ? fmtUSD(stats.totalPnl) : '$0.00'}
           sub={stats ? `${stats.wins}W / ${stats.losses}L` : '—'}
           color={!stats || stats.totalPnl >= 0 ? 'var(--green)' : 'var(--red)'}
@@ -129,7 +129,7 @@ export default function Dashboard({ trades }: { trades: Trade[] }) {
 
         {/* Setup breakdown */}
         <Card>
-          <CardHeader title="P&L per Setup" />
+          <CardHeader title="P&amp;L per Setup" />
           {!setupEntries.length
             ? <Empty icon="📊" text="Tambah trades di Jurnal" />
             : setupEntries.map(([s, d]) => (
