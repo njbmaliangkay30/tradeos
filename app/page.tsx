@@ -1,4 +1,4 @@
-import RiskCalculator from '@/components/RiskCalculator';
+import Calculator from '@/components/Calculator';
 
 export default function Home() {
   return (
@@ -20,7 +20,8 @@ export default function Home() {
         
         {/* Kolom Kiri: Calculator (Memakan 7 kolom) */}
         <div className="xl:col-span-7">
-          <RiskCalculator />
+          {/* INI YANG DIPERBAIKI -> Memanggil <Calculator /> */}
+          <Calculator /> 
         </div>
 
         {/* Kolom Kanan: SOP & Checklist (Memakan 5 kolom) */}
