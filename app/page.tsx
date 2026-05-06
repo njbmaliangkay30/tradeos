@@ -3,6 +3,7 @@ import { Wallet, TrendingUp, Target, Clock, ArrowUpRight, Globe } from 'lucide-r
 export default function Home() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-10">
+      {/* Header */}
       <header className="flex justify-between items-end pb-6 border-b border-zinc-800/50">
         <div>
           <h2 className="text-4xl font-black text-zinc-100 tracking-tight">Overview</h2>
@@ -12,7 +13,7 @@ export default function Home() {
 
       {/* Baris 1: Kartu Metrik Utama */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-zinc-900/60 border border-zinc-800/50 p-6 rounded-3xl backdrop-blur-md hover:border-cyan-500/30 transition-colors">
+        <div className="bg-zinc-900/60 border border-zinc-800/50 p-6 rounded-3xl backdrop-blur-md hover:border-cyan-500/30 transition-colors shadow-lg">
           <div className="flex justify-between items-start mb-4">
             <div className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Total Balance</div>
             <Wallet size={20} className="text-cyan-400" />
@@ -23,7 +24,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="bg-zinc-900/60 border border-zinc-800/50 p-6 rounded-3xl backdrop-blur-md hover:border-emerald-500/30 transition-colors">
+        <div className="bg-zinc-900/60 border border-zinc-800/50 p-6 rounded-3xl backdrop-blur-md hover:border-emerald-500/30 transition-colors shadow-lg">
           <div className="flex justify-between items-start mb-4">
             <div className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Net Profit</div>
             <TrendingUp size={20} className="text-emerald-400" />
@@ -32,7 +33,7 @@ export default function Home() {
           <div className="mt-2 text-xs text-zinc-500">From 0 closed trades</div>
         </div>
 
-        <div className="bg-zinc-900/60 border border-zinc-800/50 p-6 rounded-3xl backdrop-blur-md hover:border-indigo-500/30 transition-colors">
+        <div className="bg-zinc-900/60 border border-zinc-800/50 p-6 rounded-3xl backdrop-blur-md hover:border-indigo-500/30 transition-colors shadow-lg">
           <div className="flex justify-between items-start mb-4">
             <div className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Current Win Rate</div>
             <Target size={20} className="text-indigo-400" />
@@ -44,11 +45,11 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Baris 2: Layout 2 Kolom (Kiri: Histori | Kanan: Kalender Makro) */}
+      {/* Baris 2: Layout 2 Kolom (Kiri: Histori | Kanan: Kalender) */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
         
         {/* Kolom Kiri: Riwayat Trading (7 Kolom) */}
-        <div className="xl:col-span-7 bg-zinc-900/60 border border-zinc-800/50 rounded-3xl backdrop-blur-md p-8 flex flex-col">
+        <div className="xl:col-span-7 bg-zinc-900/60 border border-zinc-800/50 rounded-3xl backdrop-blur-md p-8 flex flex-col shadow-xl">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-bold text-xl text-zinc-100 flex items-center gap-3">
               <Clock className="text-cyan-500" /> Recent Trades
@@ -77,28 +78,44 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Kolom Kanan: Kalender Ekonomi Investing.com (5 Kolom) */}
-        <div className="xl:col-span-5 bg-zinc-900/60 border border-zinc-800/50 rounded-3xl backdrop-blur-md p-8 flex flex-col h-[500px]">
+        {/* Kolom Kanan: KALENDER INVESTING.COM LANGSUNG (5 Kolom) */}
+        <div className="xl:col-span-5 bg-zinc-900/60 border border-zinc-800/50 rounded-3xl backdrop-blur-md p-8 flex flex-col min-h-[500px] shadow-xl">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-bold text-xl text-zinc-100 flex items-center gap-3">
-              <Globe className="text-indigo-400" /> Macro Economic Calendar
+              <Globe className="text-indigo-400" /> Economic Calendar
             </h3>
           </div>
           
-          {/* Iframe Wrapper untuk menyesuaikan ukuran */}
-          <div className="flex-1 w-full bg-zinc-950 rounded-xl overflow-hidden border border-zinc-800/80">
-            <iframe 
-              src="https://sscal.investing.com?columns=exc_flags,exc_importance,exc_actual,exc_forecast,exc_previous&features=datepicker,timezone&countries=5&calType=week&timeZone=8&lang=1" 
-              width="100%" 
-              height="100%" 
-              frameBorder="0" 
-              allowTransparency={true} 
-              marginWidth={0} 
-              marginHeight={0}
-              className="filter invert hue-rotate-180 contrast-90" // Trik CSS untuk mengubah iframe putih jadi mode gelap
-            ></iframe>
+          {/* Iframe Kalender */}
+          <div className="flex-1 w-full bg-zinc-950 rounded-xl border border-zinc-800/80 overflow-hidden relative flex flex-col">
+            <div className="flex-1 w-full relative">
+              <iframe 
+                src="https://sslecal2.investing.com?columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&features=datepicker,timezone&countries=5,25,37,45,39,14,48,4,10,35,17,6,11,42,44,22,43,36,26,12,46,41,178,72&calType=week&timeZone=113&lang=54" 
+                width="100%" 
+                height="100%" 
+                frameBorder={0} 
+                allowTransparency={true} 
+                marginWidth={0} 
+                marginHeight={0}
+                className="absolute top-0 left-0 w-full h-full filter invert hue-rotate-180 contrast-90"
+              ></iframe>
+            </div>
+            
+            {/* Footer Kredit Resmi */}
+            <div className="w-full text-center py-2 bg-zinc-950 border-t border-zinc-800/80 z-10 relative">
+              <span className="text-[11px] text-zinc-500">
+                Kalender Ekonomi Real Time dipersembahkan oleh{' '}
+                <a 
+                  href="https://id.investing.com" 
+                  rel="nofollow" 
+                  target="_blank" 
+                  className="text-cyan-500 hover:text-cyan-400 font-semibold transition-colors"
+                >
+                  Investing.com Indonesia
+                </a>
+              </span>
+            </div>
           </div>
-          <p className="text-[10px] text-zinc-500 text-center mt-3">Powered by Investing.com</p>
         </div>
 
       </div>
