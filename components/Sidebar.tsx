@@ -2,55 +2,92 @@
 
 import { LayoutDashboard, Calculator, BookOpen, LineChart, Settings } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
 
 export default function Sidebar() {
-  const [active, setActive] = useState('dashboard');
+  const pathname = usePathname(); // Untuk mendeteksi halaman aktif
+  const [isExpanded, setIsExpanded] = useState(true);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Menu navigasi dengan URL asli
   const menuItems = [
     { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, href: '/' },
-    { id: 'calculator', name: 'Risk Calculator', icon: Calculator, href: '#' },
-    { id: 'journal', name: 'Trading Journal', icon: BookOpen, href: '#' },
-    { id: 'analytics', name: 'Analytics', icon: LineChart, href: '#' },
+    { id: 'calculator', name: 'Risk Calculator', icon: Calculator, href: '/calculator' },
+    { id: 'journal', name: 'Trading Journal', icon: BookOpen, href: '/journal' },
+    { id: 'analytics', name: 'Analytics', icon: LineChart, href: '/analytics' },
   ];
 
+  // Logika Timer 10 Detik
+  const resetTimer = () => {
+    setIsExpanded(true); // Tampilkan sidebar
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    
+    // Set timer baru untuk mengecilkan sidebar setelah 10 detik (10000 ms)
+    timeoutRef.current = setTimeout(() => {
+      setIsExpanded(false);
+    }, 10000);
+  };
+
+  useEffect(() => {
+    // Jalankan timer pertama kali komponen dimuat
+    resetTimer();
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
   return (
-    <div className="w-64 h-screen bg-[#0f172a] border-r border-slate-800 text-slate-300 flex flex-col fixed left-0 top-0">
+    <div 
+      // Event listener: reset timer kalau mouse bergerak di atas sidebar atau diklik
+      onMouseMove={resetTimer}
+      onClick={resetTimer}
+      className={`h-screen bg-[#0f172a] border-r border-slate-800 text-slate-300 flex flex-col fixed left-0 top-0 z-50 transition-all duration-300 ease-in-out ${
+        isExpanded ? 'w-64' : 'w-20'
+      }`}
+    >
       {/* Logo Area */}
-      <div className="h-16 flex items-center px-6 border-b border-slate-800">
-        <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center font-bold text-white mr-3 shadow-lg shadow-blue-500/20">
+      <div className="h-16 flex items-center px-6 border-b border-slate-800 overflow-hidden whitespace-nowrap">
+        <div className="w-8 h-8 min-w-[2rem] bg-blue-600 rounded flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">
           T
         </div>
-        <h1 className="text-xl font-bold text-white tracking-wider">Trade<span className="text-blue-500">OS</span></h1>
+        <h1 className={`text-xl font-bold text-white tracking-wider ml-3 transition-opacity duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0'}`}>
+          Trade<span className="text-blue-500">OS</span>
+        </h1>
       </div>
 
       {/* Navigation Links */}
-      <div className="flex-1 py-6 px-4 space-y-2">
+      <div className="flex-1 py-6 px-4 space-y-2 overflow-x-hidden">
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const isActive = active === item.id;
+          const isActive = pathname === item.href;
+          
           return (
-            <button
+            <Link
               key={item.id}
-              onClick={() => setActive(item.id)}
+              href={item.href}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                 isActive 
                   ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20' 
                   : 'hover:bg-slate-800 hover:text-white'
               }`}
             >
-              <Icon size={20} className={isActive ? "text-blue-500" : "text-slate-400"} />
-              <span className="font-medium text-sm">{item.name}</span>
-            </button>
+              <Icon size={20} className={`min-w-[1.25rem] ${isActive ? "text-blue-500" : "text-slate-400"}`} />
+              <span className={`font-medium text-sm whitespace-nowrap transition-opacity duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0 hidden md:block'}`}>
+                {item.name}
+              </span>
+            </Link>
           );
         })}
       </div>
 
       {/* Footer Settings */}
-      <div className="p-4 border-t border-slate-800">
+      <div className="p-4 border-t border-slate-800 overflow-hidden">
         <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition-colors">
-          <Settings size={20} className="text-slate-400" />
-          <span className="font-medium text-sm">Settings</span>
+          <Settings size={20} className="min-w-[1.25rem] text-slate-400" />
+          <span className={`font-medium text-sm whitespace-nowrap transition-opacity duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0'}`}>
+            Settings
+          </span>
         </button>
       </div>
     </div>
