@@ -3,14 +3,12 @@
 import { LayoutDashboard, Calculator, BookOpen, LineChart, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 
 export default function Sidebar() {
-  const pathname = usePathname(); // Untuk mendeteksi halaman aktif
-  const [isExpanded, setIsExpanded] = useState(true);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pathname = usePathname();
+  const [isExpanded, setIsExpanded] = useState(false); // Default tertutup (kecil)
 
-  // Menu navigasi dengan URL asli
   const menuItems = [
     { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, href: '/' },
     { id: 'calculator', name: 'Risk Calculator', icon: Calculator, href: '/calculator' },
@@ -18,30 +16,11 @@ export default function Sidebar() {
     { id: 'analytics', name: 'Analytics', icon: LineChart, href: '/analytics' },
   ];
 
-  // Logika Timer 10 Detik
-  const resetTimer = () => {
-    setIsExpanded(true); // Tampilkan sidebar
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    
-    // Set timer baru untuk mengecilkan sidebar setelah 10 detik (10000 ms)
-    timeoutRef.current = setTimeout(() => {
-      setIsExpanded(false);
-    }, 10000);
-  };
-
-  useEffect(() => {
-    // Jalankan timer pertama kali komponen dimuat
-    resetTimer();
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
   return (
     <div 
-      // Event listener: reset timer kalau mouse bergerak di atas sidebar atau diklik
-      onMouseMove={resetTimer}
-      onClick={resetTimer}
+      // LOGIKA BARU: Buka saat mouse masuk, tutup saat mouse keluar
+      onMouseEnter={() => setIsExpanded(true)}
+      onMouseLeave={() => setIsExpanded(false)}
       className={`h-screen bg-[#0f172a] border-r border-slate-800 text-slate-300 flex flex-col fixed left-0 top-0 z-50 transition-all duration-300 ease-in-out ${
         isExpanded ? 'w-64' : 'w-20'
       }`}
