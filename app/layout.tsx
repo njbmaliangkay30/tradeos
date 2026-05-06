@@ -18,12 +18,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} bg-[#020617] text-white min-h-screen flex`}>
-        {/* Sidebar di sebelah kiri */}
         <Sidebar />
         
-        {/* Main Content Area (Bergeser ke kanan karena ada sidebar) */}
-        <main className="ml-64 flex-1 p-8 h-screen overflow-y-auto">
-          {children}
+        {/* Margin kiri pl-20 memberikan ruang aman saat sidebar mengecil */}
+        <main className="pl-20 w-full min-h-screen">
+          <div className="p-8 max-w-7xl mx-auto">
+             {children}
+          </div>
         </main>
       </body>
     </html>
