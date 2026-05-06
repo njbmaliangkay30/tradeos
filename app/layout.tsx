@@ -17,11 +17,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} bg-[#020617] text-white min-h-screen flex`}>
+      {/* UPDATE WARNA BACKGROUND DI SINI */}
+      <body className={`${inter.className} bg-[#09090b] text-zinc-300 min-h-screen flex`}>
         <Sidebar />
-        
-        {/* Margin kiri pl-20 memberikan ruang aman saat sidebar mengecil */}
-        <main className="pl-20 w-full min-h-screen">
+        <main className="pl-20 w-full min-h-screen selection:bg-cyan-500/30">
           <div className="p-8 max-w-7xl mx-auto">
              {children}
           </div>
