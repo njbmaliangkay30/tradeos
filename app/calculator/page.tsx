@@ -1,18 +1,23 @@
 'use client'; 
 
 import React, { useState } from 'react';
-import { Calculator as CalcIcon, AlertTriangle, ShieldCheck, CheckCircle2, Loader2 } from 'lucide-react';
+import { Calculator as CalcIcon, AlertTriangle, ShieldCheck, CheckCircle2, Loader2, XCircle } from 'lucide-react';
+import { supabase } from '@/lib/supabase'; // <--- Import Jembatan Supabase kita
 
 export default function CalculatorPage() {
+  // States
+  const [pair, setPair] = useState('BTC/USDT'); // Input koin baru
   const [capital, setCapital] = useState<number | ''>(1000);
   const [riskPercent, setRiskPercent] = useState<number | ''>(1);
   const [entryPrice, setEntryPrice] = useState<number | ''>('');
   const [stopLoss, setStopLoss] = useState<number | ''>('');
 
-  // State untuk tombol
+  // Button States
   const [isLogging, setIsLogging] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
 
+  // Kalkulasi
   const riskAmount = Number(capital) * (Number(riskPercent) / 100);
   const priceDifference = Math.abs(Number(entryPrice) - Number(stopLoss));
   const stopLossPercent = Number(entryPrice) > 0 ? (priceDifference / Number(entryPrice)) * 100 : 0;
@@ -20,16 +25,44 @@ export default function CalculatorPage() {
   const totalPositionValue = positionSize * Number(entryPrice);
   const isLong = Number(entryPrice) > Number(stopLoss);
 
-  // Fungsi saat tombol eksekusi diklik
-  const handleLogTrade = () => {
+  // FUNGSI UTAMA: Mengirim data ke Supabase
+  const handleLogTrade = async () => {
+    if (!entryPrice || !stopLoss || !pair) return;
+    
     setIsLogging(true);
-    // Simulasi loading menyimpan ke database (1.5 detik)
-    setTimeout(() => {
+    setIsError(false);
+
+    try {
+      // Perintah insert ke tabel 'trades'
+      const { error } = await supabase
+        .from('trades')
+        .insert([
+          {
+            pair: pair.toUpperCase(),
+            direction: isLong ? 'LONG' : 'SHORT',
+            entry_price: Number(entryPrice),
+            stop_loss: Number(stopLoss),
+            risk_amount: riskAmount,
+            position_size: positionSize,
+            status: 'OPEN'
+          }
+        ]);
+
+      if (error) throw error; // Jika gagal, lempar ke catch
+
+      // Jika sukses
       setIsLogging(false);
       setIsSuccess(true);
-      // Kembali ke normal setelah 3 detik
+      
+      // Kembalikan tombol ke semula setelah 3 detik
       setTimeout(() => setIsSuccess(false), 3000);
-    }, 1500);
+
+    } catch (err) {
+      console.error("Error logging trade:", err);
+      setIsLogging(false);
+      setIsError(true);
+      setTimeout(() => setIsError(false), 3000);
+    }
   };
 
   return (
@@ -38,32 +71,46 @@ export default function CalculatorPage() {
         <h1 className="text-4xl font-black text-zinc-100 tracking-tight flex items-center gap-3">
           <CalcIcon className="text-cyan-500" size={36} /> Pre-Trade Hub
         </h1>
-        <p className="text-zinc-400 mt-2">Execute your setup perfectly. Check the SOP, calculate the risk, then trade.</p>
+        <p className="text-zinc-400 mt-2">Execute your setup perfectly. Check the SOP, calculate the risk, then log it.</p>
       </header>
       
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* BAGIAN KIRI: KALKULATOR */}
+        
+        {/* KIRI: KALKULATOR */}
         <div className="lg:col-span-7 bg-zinc-900/60 border border-zinc-800/50 p-8 rounded-3xl backdrop-blur-md shadow-2xl">
           <div className="space-y-6">
+            
+            {/* Input Asset Pair */}
+            <div>
+              <label className="block text-xs text-zinc-400 mb-2 uppercase tracking-wider font-semibold">Asset Pair</label>
+              <input 
+                type="text" 
+                value={pair} 
+                onChange={(e) => setPair(e.target.value)} 
+                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl p-3.5 text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono uppercase" 
+                placeholder="e.g. BTC/USDT"
+              />
+            </div>
+
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <label className="block text-xs text-zinc-400 mb-2 uppercase tracking-wider font-semibold">Total Capital ($)</label>
-                <input type="number" value={capital} onChange={(e) => setCapital(Number(e.target.value))} className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl p-3.5 text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"/>
+                <input type="number" value={capital} onChange={(e) => setCapital(Number(e.target.value))} className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl p-3.5 text-zinc-100 focus:outline-none focus:border-cyan-500 transition-all"/>
               </div>
               <div>
                 <label className="block text-xs text-zinc-400 mb-2 uppercase tracking-wider font-semibold">Risk per Trade (%)</label>
-                <input type="number" value={riskPercent} onChange={(e) => setRiskPercent(Number(e.target.value))} className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl p-3.5 text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"/>
+                <input type="number" value={riskPercent} onChange={(e) => setRiskPercent(Number(e.target.value))} className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl p-3.5 text-zinc-100 focus:outline-none focus:border-cyan-500 transition-all"/>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-6 border-t border-zinc-800/50 pt-6">
               <div>
                 <label className="block text-xs text-zinc-400 mb-2 uppercase tracking-wider font-semibold">Entry Price ($)</label>
-                <input type="number" value={entryPrice} onChange={(e) => setEntryPrice(Number(e.target.value))} className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl p-3.5 text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all" placeholder="e.g. 65000"/>
+                <input type="number" value={entryPrice} onChange={(e) => setEntryPrice(Number(e.target.value))} className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl p-3.5 text-zinc-100 focus:outline-none focus:border-cyan-500 transition-all" placeholder="e.g. 65000"/>
               </div>
               <div>
                 <label className="block text-xs text-zinc-400 mb-2 uppercase tracking-wider font-semibold">Stop Loss ($)</label>
-                <input type="number" value={stopLoss} onChange={(e) => setStopLoss(Number(e.target.value))} className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl p-3.5 text-zinc-100 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-all" placeholder="e.g. 64000"/>
+                <input type="number" value={stopLoss} onChange={(e) => setStopLoss(Number(e.target.value))} className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl p-3.5 text-zinc-100 focus:outline-none focus:border-rose-500 transition-all" placeholder="e.g. 64000"/>
               </div>
             </div>
           </div>
@@ -93,7 +140,7 @@ export default function CalculatorPage() {
           )}
         </div>
 
-        {/* BAGIAN KANAN: SOP CHECKLIST */}
+        {/* KANAN: SOP CHECKLIST & TOMBOL EXECUTE */}
         <div className="lg:col-span-5 space-y-6">
           <div className="bg-zinc-900/60 border border-zinc-800/50 p-8 rounded-3xl backdrop-blur-md shadow-xl h-full flex flex-col">
             <div className="flex items-center gap-3 mb-6">
@@ -122,17 +169,21 @@ export default function CalculatorPage() {
             <div className="mt-6 pt-6 border-t border-zinc-800/50 text-center">
                <button 
                   onClick={handleLogTrade}
-                  disabled={isLogging || isSuccess || !entryPrice || !stopLoss}
+                  disabled={isLogging || isSuccess || !entryPrice || !stopLoss || !pair}
                   className={`w-full flex items-center justify-center gap-2 font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
                     isSuccess 
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 shadow-emerald-500/10' 
+                      : isError 
+                      ? 'bg-rose-500/20 text-rose-400 border border-rose-500/50 shadow-rose-500/10'
                       : 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-cyan-500/20'
                   }`}
                >
                  {isLogging ? (
-                   <><Loader2 className="animate-spin" size={20} /> Logging Trade...</>
+                   <><Loader2 className="animate-spin" size={20} /> Logging to Database...</>
                  ) : isSuccess ? (
-                   <><CheckCircle2 size={20} /> Trade Logged to Journal</>
+                   <><CheckCircle2 size={20} /> Trade Saved!</>
+                 ) : isError ? (
+                   <><XCircle size={20} /> Failed to Save. Check Console.</>
                  ) : (
                    "Execute & Log Trade"
                  )}
