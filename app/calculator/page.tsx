@@ -1,7 +1,7 @@
 'use client'; 
 
 import React, { useState } from 'react';
-import { Calculator as CalcIcon, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Calculator as CalcIcon, AlertTriangle, ShieldCheck, CheckCircle2, Loader2 } from 'lucide-react';
 
 export default function CalculatorPage() {
   const [capital, setCapital] = useState<number | ''>(1000);
@@ -9,12 +9,28 @@ export default function CalculatorPage() {
   const [entryPrice, setEntryPrice] = useState<number | ''>('');
   const [stopLoss, setStopLoss] = useState<number | ''>('');
 
+  // State untuk tombol
+  const [isLogging, setIsLogging] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
   const riskAmount = Number(capital) * (Number(riskPercent) / 100);
   const priceDifference = Math.abs(Number(entryPrice) - Number(stopLoss));
   const stopLossPercent = Number(entryPrice) > 0 ? (priceDifference / Number(entryPrice)) * 100 : 0;
   const positionSize = priceDifference > 0 ? riskAmount / priceDifference : 0;
   const totalPositionValue = positionSize * Number(entryPrice);
   const isLong = Number(entryPrice) > Number(stopLoss);
+
+  // Fungsi saat tombol eksekusi diklik
+  const handleLogTrade = () => {
+    setIsLogging(true);
+    // Simulasi loading menyimpan ke database (1.5 detik)
+    setTimeout(() => {
+      setIsLogging(false);
+      setIsSuccess(true);
+      // Kembali ke normal setelah 3 detik
+      setTimeout(() => setIsSuccess(false), 3000);
+    }, 1500);
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -25,10 +41,8 @@ export default function CalculatorPage() {
         <p className="text-zinc-400 mt-2">Execute your setup perfectly. Check the SOP, calculate the risk, then trade.</p>
       </header>
       
-      {/* GRID LAYOUT: Kiri (Kalkulator) | Kanan (SOP Checklist) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        {/* BAGIAN KIRI: KALKULATOR (Memakan 7 Kolom) */}
+        {/* BAGIAN KIRI: KALKULATOR */}
         <div className="lg:col-span-7 bg-zinc-900/60 border border-zinc-800/50 p-8 rounded-3xl backdrop-blur-md shadow-2xl">
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-6">
@@ -79,7 +93,7 @@ export default function CalculatorPage() {
           )}
         </div>
 
-        {/* BAGIAN KANAN: SOP CHECKLIST (Memakan 5 Kolom) */}
+        {/* BAGIAN KANAN: SOP CHECKLIST */}
         <div className="lg:col-span-5 space-y-6">
           <div className="bg-zinc-900/60 border border-zinc-800/50 p-8 rounded-3xl backdrop-blur-md shadow-xl h-full flex flex-col">
             <div className="flex items-center gap-3 mb-6">
@@ -106,8 +120,22 @@ export default function CalculatorPage() {
             </div>
 
             <div className="mt-6 pt-6 border-t border-zinc-800/50 text-center">
-               <button className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-cyan-500/20 transition-all active:scale-95">
-                 Everything Checked. Ready to Trade.
+               <button 
+                  onClick={handleLogTrade}
+                  disabled={isLogging || isSuccess || !entryPrice || !stopLoss}
+                  className={`w-full flex items-center justify-center gap-2 font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
+                    isSuccess 
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 shadow-emerald-500/10' 
+                      : 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-cyan-500/20'
+                  }`}
+               >
+                 {isLogging ? (
+                   <><Loader2 className="animate-spin" size={20} /> Logging Trade...</>
+                 ) : isSuccess ? (
+                   <><CheckCircle2 size={20} /> Trade Logged to Journal</>
+                 ) : (
+                   "Execute & Log Trade"
+                 )}
                </button>
             </div>
           </div>
