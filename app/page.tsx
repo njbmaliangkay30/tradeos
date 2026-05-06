@@ -1,8 +1,8 @@
-import { Wallet, TrendingUp, Target, Clock, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Wallet, TrendingUp, Target, Clock, ArrowUpRight, Globe } from 'lucide-react';
 
 export default function Home() {
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-8 animate-in fade-in duration-500 pb-10">
       <header className="flex justify-between items-end pb-6 border-b border-zinc-800/50">
         <div>
           <h2 className="text-4xl font-black text-zinc-100 tracking-tight">Overview</h2>
@@ -44,37 +44,63 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Baris 2: Riwayat Trading Terakhir */}
-      <div className="bg-zinc-900/60 border border-zinc-800/50 rounded-3xl backdrop-blur-md p-8">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="font-bold text-xl text-zinc-100 flex items-center gap-3">
-            <Clock className="text-cyan-500" /> Recent Trades History
-          </h3>
-          <button className="text-sm text-cyan-400 hover:text-cyan-300 font-medium transition-colors">View All</button>
+      {/* Baris 2: Layout 2 Kolom (Kiri: Histori | Kanan: Kalender Makro) */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+        
+        {/* Kolom Kiri: Riwayat Trading (7 Kolom) */}
+        <div className="xl:col-span-7 bg-zinc-900/60 border border-zinc-800/50 rounded-3xl backdrop-blur-md p-8 flex flex-col">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="font-bold text-xl text-zinc-100 flex items-center gap-3">
+              <Clock className="text-cyan-500" /> Recent Trades
+            </h3>
+            <button className="text-sm text-cyan-400 hover:text-cyan-300 font-medium transition-colors">View All</button>
+          </div>
+
+          <div className="overflow-x-auto flex-1">
+            <table className="w-full text-left text-sm">
+              <thead className="text-zinc-400 font-semibold border-b border-zinc-800">
+                <tr>
+                  <th className="pb-4 pl-4">Asset</th>
+                  <th className="pb-4">Type</th>
+                  <th className="pb-4">Result</th>
+                  <th className="pb-4 text-right pr-4">PnL</th>
+                </tr>
+              </thead>
+              <tbody className="text-zinc-300">
+                <tr>
+                  <td colSpan={4} className="py-16 text-center text-zinc-500 italic border-b border-zinc-800/30">
+                    No trade data recorded yet.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        {/* Tabel Placeholder */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="text-zinc-400 font-semibold border-b border-zinc-800">
-              <tr>
-                <th className="pb-4 pl-4">Asset</th>
-                <th className="pb-4">Type</th>
-                <th className="pb-4">Entry Date</th>
-                <th className="pb-4">Result</th>
-                <th className="pb-4 text-right pr-4">PnL</th>
-              </tr>
-            </thead>
-            <tbody className="text-zinc-300">
-              {/* Ini contoh data kosong, nanti akan diisi otomatis dari database Supabase */}
-              <tr>
-                <td colSpan={5} className="py-12 text-center text-zinc-500 italic border-b border-zinc-800/30">
-                  No trade data recorded yet. Head over to the Journal to log your first trade.
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        {/* Kolom Kanan: Kalender Ekonomi Investing.com (5 Kolom) */}
+        <div className="xl:col-span-5 bg-zinc-900/60 border border-zinc-800/50 rounded-3xl backdrop-blur-md p-8 flex flex-col h-[500px]">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="font-bold text-xl text-zinc-100 flex items-center gap-3">
+              <Globe className="text-indigo-400" /> Macro Economic Calendar
+            </h3>
+          </div>
+          
+          {/* Iframe Wrapper untuk menyesuaikan ukuran */}
+          <div className="flex-1 w-full bg-zinc-950 rounded-xl overflow-hidden border border-zinc-800/80">
+            <iframe 
+              src="https://sscal.investing.com?columns=exc_flags,exc_importance,exc_actual,exc_forecast,exc_previous&features=datepicker,timezone&countries=5&calType=week&timeZone=8&lang=1" 
+              width="100%" 
+              height="100%" 
+              frameBorder="0" 
+              allowTransparency={true} 
+              marginWidth={0} 
+              marginHeight={0}
+              className="filter invert hue-rotate-180 contrast-90" // Trik CSS untuk mengubah iframe putih jadi mode gelap
+            ></iframe>
+          </div>
+          <p className="text-[10px] text-zinc-500 text-center mt-3">Powered by Investing.com</p>
         </div>
+
       </div>
     </div>
   );
