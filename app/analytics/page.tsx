@@ -2,46 +2,47 @@ import { LineChart, TrendingUp, Crosshair, Wallet } from 'lucide-react';
 
 export default function AnalyticsPage() {
   return (
-    <div className="space-y-6">
-      <header className="border-b border-slate-800 pb-4">
-        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-          <LineChart className="text-blue-500" /> Performance Analytics
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <header className="border-b border-zinc-800/50 pb-6">
+        <h1 className="text-4xl font-black text-zinc-100 tracking-tight flex items-center gap-3">
+          <LineChart className="text-cyan-500" size={36} /> Performance Analytics
         </h1>
-        <p className="text-slate-400 text-sm mt-1">Track your win rate and profitability.</p>
+        <p className="text-zinc-400 mt-2">Track your win rate and profitability based on data.</p>
       </header>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-lg">
-          <div className="flex items-center gap-3 text-slate-400 mb-2">
+        <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/50 p-6 rounded-3xl shadow-xl">
+          <div className="flex items-center gap-3 text-zinc-400 mb-2">
             <Crosshair size={18} />
-            <h3 className="font-medium">Win Rate</h3>
+            <h3 className="font-semibold uppercase tracking-wider text-xs">Win Rate</h3>
           </div>
-          <div className="text-3xl font-bold text-white">0.0%</div>
-          <p className="text-xs text-slate-500 mt-2">0 Wins / 0 Losses</p>
+          <div className="text-4xl font-black text-zinc-100 mt-2">0.0%</div>
+          <p className="text-xs text-zinc-500 mt-2">0 Wins / 0 Losses</p>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-lg">
-          <div className="flex items-center gap-3 text-slate-400 mb-2">
+        <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/50 p-6 rounded-3xl shadow-xl">
+          <div className="flex items-center gap-3 text-zinc-400 mb-2">
             <TrendingUp size={18} />
-            <h3 className="font-medium">Net Profit</h3>
+            <h3 className="font-semibold uppercase tracking-wider text-xs">Net Profit</h3>
           </div>
-          <div className="text-3xl font-bold text-green-400">+$0.00</div>
-          <p className="text-xs text-slate-500 mt-2">Total profit/loss across all trades</p>
+          <div className="text-4xl font-black text-emerald-400 mt-2">+$0.00</div>
+          <p className="text-xs text-zinc-500 mt-2">Total across all trades</p>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-lg">
-          <div className="flex items-center gap-3 text-slate-400 mb-2">
+        <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/50 p-6 rounded-3xl shadow-xl">
+          <div className="flex items-center gap-3 text-zinc-400 mb-2">
             <Wallet size={18} />
-            <h3 className="font-medium">Avg Risk/Reward</h3>
+            <h3 className="font-semibold uppercase tracking-wider text-xs">Avg Risk/Reward</h3>
           </div>
-          <div className="text-3xl font-bold text-blue-400">1 : 0</div>
-          <p className="text-xs text-slate-500 mt-2">Based on your trading history</p>
+          <div className="text-4xl font-black text-indigo-400 mt-2">1 : 0</div>
+          <p className="text-xs text-zinc-500 mt-2">Based on your history</p>
         </div>
       </div>
 
-      <div className="mt-8 p-12 border-2 border-dashed border-slate-800 rounded-xl text-center text-slate-500">
-        <p>Chart data will appear here once you start logging your trades.</p>
+      <div className="mt-8 p-16 border-2 border-dashed border-zinc-800/50 rounded-3xl text-center text-zinc-500 bg-zinc-900/20">
+        <p className="font-medium text-zinc-400">Not enough data to generate charts.</p>
+        <p className="text-sm mt-1">Start executing and logging trades to see your performance graph.</p>
       </div>
     </div>
   );
